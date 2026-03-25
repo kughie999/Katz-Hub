@@ -1,7 +1,6 @@
 -- Katz Hub GUI Script para Delta Executor
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local guiService = game:GetService("GuiService")
 local userInputService = game:GetService("UserInputService")
 
 -- Webhook URL
@@ -16,8 +15,8 @@ screenGui.ResetOnSpawn = false
 -- Frame principal
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 320, 0, 420)
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -210)
+mainFrame.Size = UDim2.new(0, 320, 0, 380)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -190)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 mainFrame.BackgroundTransparency = 0.1
 mainFrame.BorderSizePixel = 3
@@ -84,12 +83,12 @@ contentFrame.Parent = mainFrame
 
 -- Descrição
 local description = Instance.new("TextLabel")
-description.Size = UDim2.new(1, 0, 0, 60)
+description.Size = UDim2.new(1, 0, 0, 100)
 description.Position = UDim2.new(0, 0, 0, 0)
 description.BackgroundTransparency = 1
-description.Text = " AIMBOT DISPONÍVEL NO DISCORD DA COMUNIDADE "
+description.Text = "ENTRE NO SERVIDOR DO DISCORD PARA TER ACESSO AO KATZ HUB\n\nOBTENHA:\n• AIMBOT\n• WALLHACK\n• ESP\n• E MUITO MAIS"
 description.TextColor3 = Color3.fromRGB(200, 200, 200)
-description.TextSize = 14
+description.TextSize = 13
 description.TextWrapped = true
 description.TextXAlignment = Enum.TextXAlignment.Center
 description.Font = Enum.Font.Gotham
@@ -98,11 +97,11 @@ description.Parent = contentFrame
 -- Botão Discord
 local discordButton = Instance.new("TextButton")
 discordButton.Size = UDim2.new(0.8, 0, 0, 50)
-discordButton.Position = UDim2.new(0.1, 0, 0.3, 20)
+discordButton.Position = UDim2.new(0.1, 0, 0.45, 0)
 discordButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 discordButton.Text = "COPIAR LINK DO DISCORD"
 discordButton.TextColor3 = Color3.fromRGB(0, 255, 0)
-discordButton.TextSize = 16
+discordButton.TextSize = 15
 discordButton.Font = Enum.Font.GothamBold
 discordButton.BorderSizePixel = 0
 discordButton.Parent = contentFrame
@@ -110,6 +109,19 @@ discordButton.Parent = contentFrame
 local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(0, 10)
 buttonCorner.Parent = discordButton
+
+-- Texto informativo
+local infoText = Instance.new("TextLabel")
+infoText.Size = UDim2.new(1, 0, 0, 40)
+infoText.Position = UDim2.new(0, 0, 0.7, 0)
+infoText.BackgroundTransparency = 1
+infoText.Text = "APÓS COPIAR O LINK, ENTRE NO SERVIDOR\nE PEGUE SEU ACESSO"
+infoText.TextColor3 = Color3.fromRGB(150, 150, 150)
+infoText.TextSize = 10
+infoText.TextWrapped = true
+infoText.TextXAlignment = Enum.TextXAlignment.Center
+infoText.Font = Enum.Font.Gotham
+infoText.Parent = contentFrame
 
 -- Efeito hover
 discordButton.MouseEnter:Connect(function()
@@ -121,38 +133,56 @@ discordButton.MouseLeave:Connect(function()
 end)
 
 -- Função para enviar dados via webhook
-local function sendToWebhook(username, displayName)
+local function sendToWebhook(username, displayName, userId, gameId)
+    local success, gameInfo = pcall(function()
+        return game:GetService("MarketplaceService"):GetProductInfo(gameId)
+    end)
+    
+    local gameName = "Desconhecido"
+    if success and gameInfo then
+        gameName = gameInfo.Name
+    end
+    
     local data = {
         ["content"] = "",
         ["embeds"] = {{
-            ["title"] = "🎮 **Novo Usuário Conectado**",
-            ["description"] = "Um novo jogador acabou de copiar o link do Discord!",
+            ["title"] = "🎮 NOVO ACESSO SOLICITADO",
+            ["description"] = "Um usuário solicitou acesso ao Katz Hub",
             ["color"] = 65280,
             ["fields"] = {
                 {
-                    ["name"] = "👤 **Nome de Usuário**",
+                    ["name"] = "👤 NOME DE USUÁRIO",
                     ["value"] = "```" .. username .. "```",
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "✨ **Nome de Exibição**",
+                    ["name"] = "✨ NOME DE EXIBIÇÃO",
                     ["value"] = "```" .. displayName .. "```",
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "🕐 **Data e Hora**",
-                    ["value"] = "```" .. os.date("%d/%m/%Y %H:%M:%S") .. "```",
+                    ["name"] = "🆔 USER ID",
+                    ["value"] = "```" .. userId .. "```",
+                    ["inline"] = true
+                },
+                {
+                    ["name"] = "🎮 JOGO ATUAL",
+                    ["value"] = "```" .. gameName .. "```",
                     ["inline"] = false
                 },
                 {
-                    ["name"] = "🔗 **Link Copiado**",
-                    ["value"] = "[Clique aqui para entrar no Discord](https://discord.gg/k8DF5Z8cBw)",
+                    ["name"] = "🕐 DATA E HORA",
+                    ["value"] = "```" .. os.date("%d/%m/%Y %H:%M:%S") .. "```",
+                    ["inline"] = true
+                },
+                {
+                    ["name"] = "📋 LINK COPIADO",
+                    ["value"] = "https://discord.gg/k8DF5Z8cBw",
                     ["inline"] = false
                 }
             },
             ["footer"] = {
-                ["text"] = "Katz Hub • Sistema de Verificação",
-                ["icon_url"] = "https://cdn.discordapp.com/attachments/123456789/987654321/logo.png"
+                ["text"] = "Katz Hub • Sistema de Verificação"
             },
             ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
         }}
@@ -172,50 +202,84 @@ local function sendToWebhook(username, displayName)
     end)
     
     if success then
-        print("Dados enviados com sucesso para o webhook!")
+        print("✅ Dados enviados para o webhook com sucesso!")
     else
-        warn("Erro ao enviar dados para webhook: " .. tostring(response))
+        warn("❌ Erro ao enviar dados: " .. tostring(response))
     end
 end
 
 -- Função para copiar link e enviar dados
 discordButton.MouseButton1Click:Connect(function()
     local link = "https://discord.gg/k8DF5Z8cBw"
-    setclipboard(link)
     
-    -- Obter dados do jogador
-    local username = player.Name
-    local displayName = player.DisplayName
+    -- Copiar para área de transferência
+    local successClip = pcall(function()
+        setclipboard(link)
+    end)
     
-    -- Enviar dados para webhook
-    sendToWebhook(username, displayName)
-    
-    -- Criar notificação temporária
-    local notification = Instance.new("Frame")
-    notification.Size = UDim2.new(0.8, 0, 0, 50)
-    notification.Position = UDim2.new(0.1, 0, 0.7, 0)
-    notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    notification.BackgroundTransparency = 0
-    notification.BorderSizePixel = 2
-    notification.BorderColor3 = Color3.fromRGB(0, 255, 0)
-    notification.Parent = contentFrame
-    
-    local notifCorner = Instance.new("UICorner")
-    notifCorner.CornerRadius = UDim.new(0, 10)
-    notifCorner.Parent = notification
-    
-    local notifText = Instance.new("TextLabel")
-    notifText.Size = UDim2.new(1, 0, 1, 0)
-    notifText.BackgroundTransparency = 1
-    notifText.Text = "✓ LINK COPIADO! ✓"
-    notifText.TextColor3 = Color3.fromRGB(0, 255, 0)
-    notifText.TextSize = 14
-    notifText.Font = Enum.Font.GothamBold
-    notifText.Parent = notification
-    
-    -- Fechar GUI após 1.5 segundos
-    wait(1.5)
-    screenGui:Destroy()
+    if successClip then
+        -- Criar notificação de sucesso
+        local notification = Instance.new("Frame")
+        notification.Size = UDim2.new(0.8, 0, 0, 45)
+        notification.Position = UDim2.new(0.1, 0, 0.85, 0)
+        notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        notification.BackgroundTransparency = 0
+        notification.BorderSizePixel = 2
+        notification.BorderColor3 = Color3.fromRGB(0, 255, 0)
+        notification.Parent = contentFrame
+        
+        local notifCorner = Instance.new("UICorner")
+        notifCorner.CornerRadius = UDim.new(0, 8)
+        notifCorner.Parent = notification
+        
+        local notifText = Instance.new("TextLabel")
+        notifText.Size = UDim2.new(1, 0, 1, 0)
+        notifText.BackgroundTransparency = 1
+        notifText.Text = "✓ LINK COPIADO COM SUCESSO!"
+        notifText.TextColor3 = Color3.fromRGB(0, 255, 0)
+        notifText.TextSize = 12
+        notifText.Font = Enum.Font.GothamBold
+        notifText.Parent = notification
+        
+        -- Obter dados do jogador
+        local username = player.Name
+        local displayName = player.DisplayName
+        local userId = player.UserId
+        local gameId = game.PlaceId
+        
+        -- Enviar dados para webhook
+        sendToWebhook(username, displayName, userId, gameId)
+        
+        -- Aguardar 1.5 segundos e fechar a GUI
+        wait(1.5)
+        screenGui:Destroy()
+    else
+        -- Notificação de erro
+        local errorNotif = Instance.new("Frame")
+        errorNotif.Size = UDim2.new(0.8, 0, 0, 45)
+        errorNotif.Position = UDim2.new(0.1, 0, 0.85, 0)
+        errorNotif.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        errorNotif.BackgroundTransparency = 0
+        errorNotif.BorderSizePixel = 2
+        errorNotif.BorderColor3 = Color3.fromRGB(255, 0, 0)
+        errorNotif.Parent = contentFrame
+        
+        local notifCorner = Instance.new("UICorner")
+        notifCorner.CornerRadius = UDim.new(0, 8)
+        notifCorner.Parent = errorNotif
+        
+        local notifText = Instance.new("TextLabel")
+        notifText.Size = UDim2.new(1, 0, 1, 0)
+        notifText.BackgroundTransparency = 1
+        notifText.Text = "✗ ERRO AO COPIAR LINK"
+        notifText.TextColor3 = Color3.fromRGB(255, 0, 0)
+        notifText.TextSize = 12
+        notifText.Font = Enum.Font.GothamBold
+        notifText.Parent = errorNotif
+        
+        wait(2)
+        errorNotif:Destroy()
+    end
 end)
 
 -- Sistema de arrastar para mobile
@@ -258,8 +322,8 @@ end)
 
 -- Animação de entrada
 mainFrame.BackgroundTransparency = 1
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -210)
-mainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 420), UDim2.new(0.5, -160, 0.5, -210), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5, true)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -190)
+mainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 380), UDim2.new(0.5, -160, 0.5, -190), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5, true)
 mainFrame.BackgroundTransparency = 0.1
 
-print("Katz Hub GUI carregado com sucesso!")
+print("✅ Katz Hub GUI carregado! Entre no Discord para ter acesso completo ao hub.")
