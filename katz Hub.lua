@@ -3,9 +3,6 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local userInputService = game:GetService("UserInputService")
 
--- Webhook URL
-local webhookUrl = "https://discord.com/api/webhooks/1459328013345751201/ppCoN9kvoo31HjyUJXjYmjYGn_lNedeGQ_J_3eqdq2AWbpU7S4iGz3MPP1DBhiHPN7mk"
-
 -- Criar ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "KatzHubGUI"
@@ -15,8 +12,8 @@ screenGui.ResetOnSpawn = false
 -- Frame principal
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 320, 0, 380)
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -190)
+mainFrame.Size = UDim2.new(0, 320, 0, 360)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -180)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 mainFrame.BackgroundTransparency = 0.1
 mainFrame.BorderSizePixel = 3
@@ -83,7 +80,7 @@ contentFrame.Parent = mainFrame
 
 -- Descrição
 local description = Instance.new("TextLabel")
-description.Size = UDim2.new(1, 0, 0, 100)
+description.Size = UDim2.new(1, 0, 0, 110)
 description.Position = UDim2.new(0, 0, 0, 0)
 description.BackgroundTransparency = 1
 description.Text = "ENTRE NO SERVIDOR DO DISCORD PARA TER ACESSO AO KATZ HUB\n\nOBTENHA:\n• AIMBOT\n• WALLHACK\n• ESP\n• E MUITO MAIS"
@@ -132,83 +129,7 @@ discordButton.MouseLeave:Connect(function()
     discordButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 end)
 
--- Função para enviar dados via webhook
-local function sendToWebhook(username, displayName, userId, gameId)
-    local success, gameInfo = pcall(function()
-        return game:GetService("MarketplaceService"):GetProductInfo(gameId)
-    end)
-    
-    local gameName = "Desconhecido"
-    if success and gameInfo then
-        gameName = gameInfo.Name
-    end
-    
-    local data = {
-        ["content"] = "",
-        ["embeds"] = {{
-            ["title"] = "🎮 NOVO ACESSO SOLICITADO",
-            ["description"] = "Um usuário solicitou acesso ao Katz Hub",
-            ["color"] = 65280,
-            ["fields"] = {
-                {
-                    ["name"] = "👤 NOME DE USUÁRIO",
-                    ["value"] = "```" .. username .. "```",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "✨ NOME DE EXIBIÇÃO",
-                    ["value"] = "```" .. displayName .. "```",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "🆔 USER ID",
-                    ["value"] = "```" .. userId .. "```",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "🎮 JOGO ATUAL",
-                    ["value"] = "```" .. gameName .. "```",
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "🕐 DATA E HORA",
-                    ["value"] = "```" .. os.date("%d/%m/%Y %H:%M:%S") .. "```",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "📋 LINK COPIADO",
-                    ["value"] = "https://discord.gg/k8DF5Z8cBw",
-                    ["inline"] = false
-                }
-            },
-            ["footer"] = {
-                ["text"] = "Katz Hub • Sistema de Verificação"
-            },
-            ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
-        }}
-    }
-    
-    local headers = {
-        ["Content-Type"] = "application/json"
-    }
-    
-    local success, response = pcall(function()
-        return request({
-            Url = webhookUrl,
-            Method = "POST",
-            Headers = headers,
-            Body = game:GetService("HttpService"):JSONEncode(data)
-        })
-    end)
-    
-    if success then
-        print("✅ Dados enviados para o webhook com sucesso!")
-    else
-        warn("❌ Erro ao enviar dados: " .. tostring(response))
-    end
-end
-
--- Função para copiar link e enviar dados
+-- Função para copiar link
 discordButton.MouseButton1Click:Connect(function()
     local link = "https://discord.gg/k8DF5Z8cBw"
     
@@ -240,15 +161,6 @@ discordButton.MouseButton1Click:Connect(function()
         notifText.TextSize = 12
         notifText.Font = Enum.Font.GothamBold
         notifText.Parent = notification
-        
-        -- Obter dados do jogador
-        local username = player.Name
-        local displayName = player.DisplayName
-        local userId = player.UserId
-        local gameId = game.PlaceId
-        
-        -- Enviar dados para webhook
-        sendToWebhook(username, displayName, userId, gameId)
         
         -- Aguardar 1.5 segundos e fechar a GUI
         wait(1.5)
@@ -322,8 +234,8 @@ end)
 
 -- Animação de entrada
 mainFrame.BackgroundTransparency = 1
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -190)
-mainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 380), UDim2.new(0.5, -160, 0.5, -190), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5, true)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -180)
+mainFrame:TweenSizeAndPosition(UDim2.new(0, 320, 0, 360), UDim2.new(0.5, -160, 0.5, -180), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5, true)
 mainFrame.BackgroundTransparency = 0.1
 
 print("✅ Katz Hub GUI carregado! Entre no Discord para ter acesso completo ao hub.")
